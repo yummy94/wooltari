@@ -1,95 +1,90 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+
+import styles from './page.module.css';
+import { useState } from 'react';
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>app/page.js</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [language, setLanguage] = useState('en');
+  
+  // Function to handle sharing
+  const handleShare = async () => {
+    if (typeof window !== 'undefined' && window.ReactNativeWebView) {
+      // If in React Native WebView, send message to the app
+      window.ReactNativeWebView.postMessage(JSON.stringify({
+        type: 'share',
+        data: {
+          url: window.location.href,
+          title: 'Wooltari App'
+        }
+      }));
+    } else if (navigator.share) {
+      // If Web Share API is available, use it
+      try {
+        await navigator.share({
+          title: 'Wooltari App',
+          text: 'Check out this app',
+          url: window.location.href,
+        });
+        console.log('Content shared successfully');
+      } catch (err) {
+        console.error('Error sharing:', err);
+      }
+    } else {
+      // Fallback for browsers that don't support sharing
+      alert('Share feature not supported on this browser');
+    }
+  };
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+
+  
+  
+  // Function to handle language change
+  const handleLanguageChange = (newLanguage) => {
+    setLanguage(newLanguage);
+    
+    if (typeof window !== 'undefined' && window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(JSON.stringify({
+        type: 'languageChange',
+        data: {
+          language: newLanguage
+        }
+      }));
+    } else {
+      alert(`Language changed to ${newLanguage}`);
+    }
+  };
+
+  return (
+    <main className={styles.main}>
+      <h1>Wooltari Web App</h1>
+      
+      <div className={styles.card}>
+        <h2>Language</h2>
+        <div className={styles.buttonGroup}>
+          <button 
+            className={`${styles.button} ${language === 'en' ? styles.active : ''}`}
+            onClick={() => handleLanguageChange('en')}
           >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
+            English
+          </button>
+          <button 
+            className={`${styles.button} ${language === 'ko' ? styles.active : ''}`}
+            onClick={() => handleLanguageChange('ko')}
           >
-            Read our docs
-          </a>
+            Korean
+          </button>
         </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+      </div>
+      
+      <div className={styles.card}>
+        <h2>Share</h2>
+        <button 
+          className={styles.button}
+          onClick={handleShare}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+          Share
+        </button>
+      </div>
+    </main>
   );
 }
