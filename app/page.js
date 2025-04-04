@@ -19,7 +19,8 @@ export default function Home() {
     const initOneSignal = async () => {
       try {
         await OneSignal.init({
-          appId: "b43abeb1-cee4-49fb-b380-316cf45ad44a",
+          //appId: "b43abeb1-cee4-49fb-b380-316cf45ad44a",
+          appId: "eef5a742-3cb6-4076-94b7-0fd17e7331f0",
           allowLocalhostAsSecureOrigin: true,
           notifyButton: { enable: false },
           promptOptions: { slidedown: { enabled: true } },
@@ -120,7 +121,7 @@ export default function Home() {
 
 
 
-  
+
   return (
     <main className={styles.main}>
       <h1>Wooltari Web App</h1>
