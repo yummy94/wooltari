@@ -37,6 +37,18 @@ export default function Home() {
     }
   };
 
+  // Handle registration for push notifications
+  const handleRegister = () => {
+    if (typeof window !== 'undefined' && window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(JSON.stringify({
+        type: 'register',
+        data: { language }
+      }));
+    } else {
+      alert('Registration only supported in the mobile app');
+    }
+  };
+
   // Handle language change
   const handleLanguageChange = useCallback((newLanguage) => {
     setLanguage(newLanguage);
@@ -77,6 +89,13 @@ export default function Home() {
           onClick={handleShare}
         >
           {language === 'en' ? 'Share' : '공유'}
+        </button>
+        
+        <button 
+          className={styles.shareButton} 
+          onClick={handleRegister}
+        >
+          {language === 'en' ? 'Register for Notifications' : '알림 등록'}
         </button>
       </div>
     </main>
